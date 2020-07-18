@@ -5,6 +5,7 @@ class TestController
 {
     public function test()
     {
-
+        $resp = ['data' => '= = '];
+        return json_encode($resp);
     }
 }

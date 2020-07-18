@@ -18,12 +18,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::namespace('Api')->group(function () {
-   Route::get('test', 'TestController@test');
-});
+Route::get('/test', 'TestController@test');
 
-Route::namespace('user')->prefix('\api\user')->group(function () {
-//    Route::get('/get')
-    Route::get('/users/{user}', 'UserController@showDefault');
-    Route::post('/create', 'UserController@storeDefault');
+Route::namespace('api\user')->prefix('user')->group(function () {
+
+    Route::get('/show/{user}', 'UserController@showDefault');
+    Route::post('/store', 'UserController@storeDefault');
 });
