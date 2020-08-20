@@ -14,17 +14,13 @@ class CreateUsersTable extends Migration
     public function up()
     {
         Schema::create('users', function (Blueprint $table) {
+            // 主要用来登录 其他信息额外加表关联
             $table->id();
             $table->string('name');
-            $table->string('username'); // account
-            $table->string('phone')->unique();
+            $table->string('email')->unique();
+            $table->string('phone')->unique()->nullable();
             $table->string('password');
-            $table->timestamp('phone_verified_at')->nullable();
             $table->string('birthday')->nullable();
-            $table->integer('level');
-            $table->timestamp('last_login');
-            $table->string('last_position')->nullable();
-            $table->rememberToken();
             $table->timestamps();
         });
     }

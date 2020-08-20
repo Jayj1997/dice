@@ -14,14 +14,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-Route::get('/test', 'TestController@test');
-
-Route::namespace('api\user')->prefix('user')->group(function () {
-
-    Route::get('/show/{user}', 'UserController@showDefault');
-    Route::post('/store', 'UserController@storeDefault');
-});
+require __DIR__.'/api/user.php'; // 有没有什么高明的写法？
