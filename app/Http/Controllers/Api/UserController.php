@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Laravel\Passport\Client as OClient;
 use GuzzleHttp\Client;
 use Exception;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -17,20 +18,27 @@ class UserController extends Controller
 
     public $successStatus = 200;
     public $unauthorised = 401;
+    public $error = 500;
 
     public function register(Request $request) {
-//        $validator = Validator::make($request->all(), [
-//            'name' => 'required',
-//            'email' => 'required|email|unique:users',
-//            'password' => 'required',
-//            'c_password' => 'required|same:password',
-//        ]); 暂时先不做后端的检查 还有就是验证邮箱和重复密码必须要2选1
-        $password = $request->password;
-        $input = $request->all();
-        $input['password'] = bcrypt($input['password']);
-        $user = User::create(array_merge($input));
-        $oClient = OClient::where('password_client', 1)->first();
-        return $this->getTokenAndRefreshToken($oClient, $user->email, $password);
+        // todo 验证邮箱
+        $name = $request->has('name');
+        $password = $request->has('password');
+        if ($name && $password) {
+            $input = $request->all();
+            $input['password'] = bcrypt($input['password']);
+            try {
+                User::create(array_merge($input));
+                return response()->json(['msg' => 'success'], $this->successStatus);
+            } catch (Exception $e) {
+                return response()->json(['error' => 'duplicated email'], $this->error);
+            }
+//            $oClient = OClient::where('password_client', 1)->first();
+//            return $this->getTokenAndRefreshToken($oClient, $user->email, $password);
+        } else {
+            return response()->json(['error' => 'no name or password'], $this->unauthorised);
+        }
+
     }
 
     public function login() {
@@ -41,7 +49,7 @@ class UserController extends Controller
             return $this->getTokenAndRefreshToken($oClient, request('email'),
             request('password'));
         } else {
-            return response()->json(['error' => 'Unauthorised'], $this->unauthorised);
+            return response()->json(['error' => 'wrong email or password'], $this->error);
         }
     }
 
