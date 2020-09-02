@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::namespace('Api')->group(function () {
+Route::prefix('user')->group(function () {
     Route::post('login', 'UserController@login');
     Route::post('register', 'UserController@register');
     Route::post('refreshtoken', 'UserController@refreshToken');

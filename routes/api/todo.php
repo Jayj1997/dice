@@ -1,21 +1,15 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
-Route::namespace('Api')->group(function () {
-    require __DIR__.'/api/user.php'; // 用户 // 有没有什么高明的写法？
-    require __DIR__.'/api/todo.php'; // 任务
+Route::group([
+    'namespace' => 'todo',
+    'prefix' => 'todo',
+    'middleware' => ['CheckClientCredentials', 'auth:api']],
+    function () {
+        Route::resource('todos', 'TodoController');
+        Route::resource('todo_tabs', 'TodoTabsController');
+        Route::resource('todo_items', 'TodoItemsController');
 });
 
 /*
