@@ -11,13 +11,15 @@ use Illuminate\Support\Facades\DB;
 class TodoController extends Controller {
 
     public $successStatus = 200;
-    public $error = 500;
+    public $errorStatus = 500;
 
     public function index() {
         try {
             $user = Auth::user();
-            $todo = Todo::with(['items' => function ($q) {
-                $q->select('id', 'name', 'order', 'sub', 'important', 'finish_at');
+            $todo = Todo::with([
+                'items' => function ($q) {
+                $q->select('id', 'todo_id', 'name', 'order', 'sub', 'important', 'finish_at', 'common', 'schedule')
+                    ->orderBy('order', 'desc');
             }])->where('user_id', $user->id)->orderBy('priority', 'desc')->get();
             if (!count($todo)) {
                 $new_todo = new Todo;
@@ -27,7 +29,7 @@ class TodoController extends Controller {
             }
             return response()->json(['items' => $todo], $this->successStatus);
         } catch (Exception $e) {
-            return response()->json(['msg' => '加载失败，请稍候再试或上报错误信息'], $this->error);
+            return response()->json(['msg' => '加载失败，请稍候再试或上报错误信息'], $this->errorStatus);
         }
     }
 
@@ -48,11 +50,11 @@ class TodoController extends Controller {
                 DB::commit();
             } catch (Exception $e) {
                 DB::rollBack();
-                return response()->json(['error' => $e], $this->error);
+                return response()->json(['error' => $e], $this->errorStatus);
             }
             return response()->json(['msg' => '添加成功', 'id' => $todo->id], $this->successStatus);
         } else {
-            return response()->json(['error' => '信息不全，请重新填写'], $this->error);
+            return response()->json(['error' => '信息不全，请重新填写'], $this->errorStatus);
         }
     }
 
@@ -61,7 +63,7 @@ class TodoController extends Controller {
             $todo = Todo::findOrFail($id);
             $todo->delete();
         } catch (Exception $e) {
-            return response()->json(['error' => '删除失败, 任务页不存在'], $this->error);
+            return response()->json(['error' => '删除失败, 任务页不存在'], $this->errorStatus);
         }
         return response()->json(['msg' => '删除成功'], $this->successStatus);
     }

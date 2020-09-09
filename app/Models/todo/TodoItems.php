@@ -7,8 +7,13 @@ use App\Models\todo\Todo;
 class TodoItems extends Model
 {
     protected $casts = [
-        'important' => 'boolean',
-        'sub' => 'boolean'
+        'important' => 'integer',
+        'sub' => 'boolean',
+        'finish_at' => 'datetime'
+    ];
+
+    protected $fillable = [
+        'todo_id', 'name', 'order', 'sub', 'important', 'finish_at'
     ];
 
     public function todo() {

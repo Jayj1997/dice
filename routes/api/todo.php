@@ -8,8 +8,13 @@ Route::group([
     'middleware' => ['CheckClientCredentials', 'auth:api']],
     function () {
         Route::resource('todos', 'TodoController');
-        Route::resource('todo_tabs', 'TodoTabsController');
+
+
         Route::resource('todo_items', 'TodoItemsController');
+        Route::post('todo_items/add_common', 'TodoItemsController@addCommon');
+        Route::post('todo_items/delete_common', 'TodoItemsController@deleteCommon');
+        Route::post('todo_items/add_schedule', 'TodoItemsController@addSchedule');
+        Route::post('todo_items/delete_schedule', 'TodoItemsController@deleteSchedule');
 });
 
 /*
