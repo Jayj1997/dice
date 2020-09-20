@@ -65,6 +65,6 @@ class TodoController extends Controller {
         } catch (Exception $e) {
             return response()->json(['error' => '删除失败, 任务页不存在'], $this->errorStatus);
         }
-        return response()->json(['msg' => '删除成功'], $this->successStatus);
+        return response()->json(['msg' => '删除了一个tab'], $this->successStatus);
     }
 }
