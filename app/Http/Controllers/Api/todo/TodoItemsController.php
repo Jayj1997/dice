@@ -32,13 +32,36 @@ class TodoItemsController extends Controller {
     public function update($id) {
         if ($id) {
             $item = TodoItems::findOrfail($id);
-            $item->finish_at = Carbon::now();
-            $item->save();
-            return response()->json(['msg' => '减少了一件任务！', 'finish_at' => Carbon::now()->toDateTimeString()], $this->successStatus);
+            DB::beginTransaction();
+            try {
+                if ($item->finish_at == null) {
+                    $item->finish_at = Carbon::now();
+                    $item->save();
+                    DB::commit();
+                    return response()->json(['msg' => '减少了一件任务！'], $this->successStatus);
+                } else {
+                    $item->finish_at = null;
+                    $item->save();
+                    DB::commit();
+                    return response()->json(['msg' => '增加了一件任务!'], $this->successStatus);
+                }
+            } catch (Exception $e) {
+                DB::rollBack();
+                return response()->json(['error' => '好像遇到一点问题!'], $this->errorStatus);
+            }
+
         } else {
             // 没取得id 可能是在未刷新就完成的过？
             return response()->json(['error' => '添加失败，刷新试试？'], $this->errorStatus);
         }
+    }
+
+    public function updateOrder(Request $request, $id) {
+        $order = $request->get('order');
+        $item = TodoItems::findOrFail($id);
+        $item->order = $order;
+        $item->save();
+        return response()->json(['msg' => '设置成功']);
     }
 
     public function destroy($id) {

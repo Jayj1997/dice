@@ -11,10 +11,14 @@ Route::group([
 
 
         Route::resource('todo_items', 'TodoItemsController');
-        Route::post('todo_items/add_common', 'TodoItemsController@addCommon');
-        Route::post('todo_items/delete_common', 'TodoItemsController@deleteCommon');
-        Route::post('todo_items/add_schedule', 'TodoItemsController@addSchedule');
-        Route::post('todo_items/delete_schedule', 'TodoItemsController@deleteSchedule');
+
+        Route::prefix('todo_items')->group(function () {
+            Route::post('add_common', 'TodoItemsController@addCommon');
+            Route::post('delete_common', 'TodoItemsController@deleteCommon');
+            Route::post('add_schedule', 'TodoItemsController@addSchedule');
+            Route::post('delete_schedule', 'TodoItemsController@deleteSchedule');
+            Route::patch('update_order/{id}', 'TodoItemsController@updateOrder');
+        });
 });
 
 /*

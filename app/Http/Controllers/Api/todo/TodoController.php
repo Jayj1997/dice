@@ -13,14 +13,19 @@ class TodoController extends Controller {
     public $successStatus = 200;
     public $errorStatus = 500;
 
-    public function index() {
+    public function index(Request $request) {
+        $tabId = $request->get('tab_id');
         try {
             $user = Auth::user();
             $todo = Todo::with([
                 'items' => function ($q) {
                 $q->select('id', 'todo_id', 'name', 'order', 'sub', 'important', 'finish_at', 'common', 'schedule')
-                    ->orderBy('order', 'desc');
-            }])->where('user_id', $user->id)->orderBy('priority', 'desc')->get();
+                    ->orderBy('order', 'desc')
+                    ->orderBy('updated_at', 'desc');
+            }])->where('user_id', $user->id)
+                ->orderBy('priority', 'desc')
+                ->where('id', empty($tabId) ? '!=' : '=' ,$tabId)
+                ->get();
             if (!count($todo)) {
                 $new_todo = new Todo;
                 $new_todo->user_id = $user->id;
@@ -29,6 +34,7 @@ class TodoController extends Controller {
             }
             return response()->json(['items' => $todo], $this->successStatus);
         } catch (Exception $e) {
+            dd($e);
             return response()->json(['msg' => '加载失败，请稍候再试或上报错误信息'], $this->errorStatus);
         }
     }
