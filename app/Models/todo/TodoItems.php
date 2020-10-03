@@ -39,7 +39,7 @@ class TodoItems extends Model
 {
     protected $casts = [
         'important' => 'integer',
-        'sub' => 'boolean',
+        'sub' => 'integer',
         'finish_at' => 'datetime'
     ];
 
