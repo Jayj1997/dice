@@ -37,22 +37,23 @@ class TodoItemsController extends Controller {
                 if ($item->finish_at == null) {
                     $item->finish_at = Carbon::now();
                     $item->save();
+                    TodoItems::where('sub', $id)->where('finish_at', null)->update(['finish_at' => Carbon::now()]);
                     DB::commit();
-                    return response()->json(['msg' => '减少了一件任务！'], $this->successStatus);
+                    return response()->json(['msg' => '任务减少了！'], $this->successStatus);
                 } else {
+                    TodoItems::where('sub', $id)->where('finish_at', $item->finish_at)->update(['finish_at' => null]);
                     $item->finish_at = null;
                     $item->save();
                     DB::commit();
-                    return response()->json(['msg' => '增加了一件任务!'], $this->successStatus);
+                    return response()->json(['msg' => '任务增加了!'], $this->successStatus);
                 }
             } catch (Exception $e) {
                 DB::rollBack();
                 return response()->json(['error' => '好像遇到一点问题!'], $this->errorStatus);
             }
-
         } else {
             // 没取得id 可能是在未刷新就完成的过？
-            return response()->json(['error' => '添加失败，刷新试试？'], $this->errorStatus);
+            return response()->json(['error' => '操作太快了，慢一点吧？'], $this->errorStatus);
         }
     }
 
