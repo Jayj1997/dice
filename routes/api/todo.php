@@ -18,6 +18,7 @@ Route::group([
             Route::post('add_schedule', 'TodoItemsController@addSchedule');
             Route::post('delete_schedule', 'TodoItemsController@deleteSchedule');
             Route::patch('update_order/{id}', 'TodoItemsController@updateOrder');
+            Route::patch('update_item_name/{id}', 'TodoItemsController@updateItemName');
         });
 });
 

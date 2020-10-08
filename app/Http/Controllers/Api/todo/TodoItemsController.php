@@ -65,6 +65,14 @@ class TodoItemsController extends Controller {
         return response()->json(['msg' => '设置成功']);
     }
 
+    public function updateItemName(Request $request, $id) {
+        $name = $request->get('name');
+        $item = TodoItems::findOrFail($id);
+        $item->name = $name;
+        $item->save();
+        return response()->json(['msg' => '修改成功']);
+    }
+
     public function destroy($id) {
         if ($id) {
             DB::beginTransaction();
