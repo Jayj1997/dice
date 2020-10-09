@@ -73,6 +73,23 @@ class TodoItemsController extends Controller {
         return response()->json(['msg' => '修改成功']);
     }
 
+    public function moveTo(Request $request, $id) {
+        DB::beginTransaction();
+        try {
+            $toId = $request->get('toTabId');
+            $item = TodoItems::findOrFail($id);
+            $item->todo_id = $toId;
+            $item->save();
+            TodoItems::where('sub', $id)->update(['todo_id' => $toId]);
+            DB::commit();
+            return response()->json(['msg' => '转移成功']);
+        } catch (Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => $e], $this->errorStatus);
+        }
+
+    }
+
     public function destroy($id) {
         if ($id) {
             DB::beginTransaction();
